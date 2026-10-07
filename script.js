@@ -243,6 +243,9 @@ const dom = {
   lbAuthorName: document.getElementById("lb-author-name"),
   lbLocationName: document.getElementById("lb-location-name"),
   lbThumbsContainer: document.getElementById("lb-thumbs-container"),
+  lbAspectBtn: document.getElementById("lb-aspect-btn"),
+  lbCinemaBtn: document.getElementById("lb-cinema-btn"),
+  lbAmbientGlow: document.getElementById("lb-ambient-glow"),
 
   // Toast
   toast: document.getElementById("toast")
@@ -585,10 +588,20 @@ function openLightbox(index) {
 
   renderLightboxImage();
   renderLightboxThumbnails();
+  resetUiIdleTimer();
 }
 
 function closeLightbox() {
   stopSlideshow();
+  if (state.uiIdleTimer) {
+    clearTimeout(state.uiIdleTimer);
+    state.uiIdleTimer = null;
+  }
+  setUiVisibility(true);
+  state.cinemaModeActive = false;
+  state.isFillMode = false;
+  dom.lbMediaWrapper.classList.remove("fill-mode");
+  dom.lightboxOverlay.classList.remove("is-fullscreen");
   state.isLightboxOpen = false;
   state.isZoomed = false;
   dom.lbMediaWrapper.classList.remove("zoomed");
@@ -619,6 +632,9 @@ function renderLightboxImage() {
     dom.lbImg.alt = item.title;
     dom.lbSpinner.classList.remove("active");
     dom.lbImg.style.opacity = "1";
+    if (dom.lbAmbientGlow) {
+      dom.lbAmbientGlow.style.backgroundImage = `url("${item.imgUrl}")`;
+    }
   };
   highRes.onerror = () => {
     dom.lbImg.src = item.thumbUrl;
@@ -737,21 +753,118 @@ function toggleZoom() {
   showToast(state.isZoomed ? "Zoomed In (1.6x)" : "Zoom Reset", "ri-zoom-in-line");
 }
 
-function toggleFullscreen() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().then(() => {
-      dom.lbFullscreenBtn.innerHTML = `<i class="ri-fullscreen-exit-line"></i>`;
-      showToast("Entered Fullscreen mode", "ri-fullscreen-line");
-    }).catch(err => {
-      console.warn("Fullscreen error:", err);
-    });
+// --- Cinematic Fullscreen & Theatrical HUD System ---
+function resetUiIdleTimer() {
+  if (!state.isLightboxOpen) return;
+  
+  // Restore UI visibility on user action
+  if (state.isUiHidden) {
+    setUiVisibility(true);
+  }
+
+  if (state.uiIdleTimer) {
+    clearTimeout(state.uiIdleTimer);
+    state.uiIdleTimer = null;
+  }
+
+  const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement) || 
+               dom.lightboxOverlay.classList.contains("is-fullscreen");
+
+  // In Fullscreen or Cinema mode, auto-hide HUD after 2.6s of mouse stillness
+  if (isFs || state.cinemaModeActive) {
+    state.uiIdleTimer = setTimeout(() => {
+      if (state.isLightboxOpen && !state.isZoomed) {
+        setUiVisibility(false);
+      }
+    }, 2600);
+  }
+}
+
+function setUiVisibility(show) {
+  state.isUiHidden = !show;
+  dom.lightboxOverlay.classList.toggle("ui-hidden", !show);
+  if (dom.lbCinemaBtn) {
+    dom.lbCinemaBtn.innerHTML = show ? `<i class="ri-eye-line"></i>` : `<i class="ri-eye-off-line"></i>`;
+    dom.lbCinemaBtn.classList.toggle("active-primary", !show);
+  }
+}
+
+function toggleCinemaMode() {
+  state.cinemaModeActive = !state.cinemaModeActive;
+  setUiVisibility(state.isUiHidden);
+  if (state.isUiHidden) {
+    showToast("Cinema View Active • Controls hidden (Press H to restore)", "ri-eye-off-line");
   } else {
-    document.exitFullscreen().then(() => {
-      dom.lbFullscreenBtn.innerHTML = `<i class="ri-fullscreen-line"></i>`;
-      showToast("Exited Fullscreen mode", "ri-fullscreen-exit-line");
-    }).catch(err => {
-      console.warn("Exit fullscreen error:", err);
-    });
+    showToast("Controls Visible", "ri-eye-line");
+    resetUiIdleTimer();
+  }
+}
+
+function toggleAspectMode() {
+  state.isFillMode = !state.isFillMode;
+  dom.lbMediaWrapper.classList.toggle("fill-mode", state.isFillMode);
+  if (dom.lbAspectBtn) {
+    dom.lbAspectBtn.classList.toggle("active-primary", state.isFillMode);
+  }
+  if (state.isFillMode) {
+    showToast("Aspect: Fill Screen (Wallpaper edge-to-edge)", "ri-aspect-ratio-line");
+  } else {
+    showToast("Aspect: Fit to Screen (Full view)", "ri-aspect-ratio-line");
+  }
+}
+
+function toggleFullscreen() {
+  const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement);
+  if (!isFs) {
+    const el = dom.lightboxOverlay.classList.contains("hidden") 
+      ? document.documentElement 
+      : dom.lightboxOverlay;
+    
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if (req) {
+      req.call(el).then(() => {
+        handleFullscreenChange();
+      }).catch(err => {
+        console.warn("Fullscreen request error:", err);
+        dom.lightboxOverlay.classList.add("is-fullscreen");
+        handleFullscreenChange();
+      });
+    } else {
+      dom.lightboxOverlay.classList.add("is-fullscreen");
+      handleFullscreenChange();
+    }
+  } else {
+    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+    if (exit) {
+      exit.call(document).then(() => {
+        handleFullscreenChange();
+      }).catch(err => console.warn("Exit fullscreen error:", err));
+    }
+  }
+}
+
+function handleFullscreenChange() {
+  const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) 
+               || dom.lightboxOverlay.classList.contains("is-fullscreen");
+  
+  dom.lightboxOverlay.classList.toggle("is-fullscreen", isFs);
+
+  if (isFs) {
+    dom.lbFullscreenBtn.innerHTML = `<i class="ri-fullscreen-exit-line"></i>`;
+    dom.lbFullscreenBtn.title = "Exit Fullscreen (F / Esc)";
+    dom.lbFullscreenBtn.classList.add("active-primary");
+    showToast("Entered Immersive Fullscreen Mode • Controls auto-hide", "ri-fullscreen-line");
+    resetUiIdleTimer();
+  } else {
+    dom.lbFullscreenBtn.innerHTML = `<i class="ri-fullscreen-line"></i>`;
+    dom.lbFullscreenBtn.title = "Immersive Fullscreen (F)";
+    dom.lbFullscreenBtn.classList.remove("active-primary");
+    setUiVisibility(true);
+    if (state.uiIdleTimer) {
+      clearTimeout(state.uiIdleTimer);
+      state.uiIdleTimer = null;
+    }
+    showToast("Exited Fullscreen", "ri-fullscreen-exit-line");
   }
 }
 
@@ -840,6 +953,17 @@ function initEventListeners() {
   dom.lbZoomBtn.addEventListener("click", toggleZoom);
   dom.lbSlideshowBtn.addEventListener("click", toggleSlideshow);
   dom.lbFullscreenBtn.addEventListener("click", toggleFullscreen);
+  if (dom.lbAspectBtn) dom.lbAspectBtn.addEventListener("click", toggleAspectMode);
+  if (dom.lbCinemaBtn) dom.lbCinemaBtn.addEventListener("click", toggleCinemaMode);
+
+  // Fullscreen change events
+  document.addEventListener("fullscreenchange", handleFullscreenChange);
+  document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+  document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+
+  // Auto-hiding HUD mouse tracker
+  dom.lightboxOverlay.addEventListener("mousemove", resetUiIdleTimer);
+  dom.lightboxOverlay.addEventListener("pointerdown", resetUiIdleTimer);
   dom.lbDownloadBtn.addEventListener("click", downloadCurrentImage);
 
   dom.lbFavBtn.addEventListener("click", () => {
@@ -879,6 +1003,14 @@ function initEventListeners() {
       case "z":
       case "Z":
         toggleZoom();
+        break;
+      case "h":
+      case "H":
+        toggleCinemaMode();
+        break;
+      case "a":
+      case "A":
+        toggleAspectMode();
         break;
       case "l":
       case "L":

@@ -232,19 +232,25 @@
         </div>
 
         <div class="lightbox-actions">
+          <button id="lb-aspect-btn" class="lb-action-btn" title="Toggle Fit / Fill Screen (A)" aria-label="Aspect Ratio">
+            <i class="ri-aspect-ratio-line"></i>
+          </button>
+          <button id="lb-cinema-btn" class="lb-action-btn" title="Cinema Mode / Toggle Controls (H)" aria-label="Cinema Mode">
+            <i class="ri-eye-line"></i>
+          </button>
           <button id="lb-slideshow-btn" class="lb-action-btn" title="Toggle Auto Slideshow (Space)" aria-label="Slideshow">
             <i class="ri-play-line"></i>
           </button>
           <button id="lb-fav-btn" class="lb-action-btn" title="Favorite (L)" aria-label="Favorite">
             <i class="ri-heart-line"></i>
           </button>
-          <button id="lb-zoom-btn" class="lb-action-btn" title="Toggle Zoom (Z)" aria-label="Zoom">
+          <button id="lb-zoom-btn" class="lb-action-btn" title="Toggle Zoom (Z / Double Click)" aria-label="Zoom">
             <i class="ri-zoom-in-line"></i>
           </button>
           <button id="lb-download-btn" class="lb-action-btn" title="Download High-Res Photograph" aria-label="Download">
             <i class="ri-download-2-line"></i>
           </button>
-          <button id="lb-fullscreen-btn" class="lb-action-btn" title="Fullscreen (F)" aria-label="Fullscreen">
+          <button id="lb-fullscreen-btn" class="lb-action-btn" title="Immersive Fullscreen (F)" aria-label="Fullscreen">
             <i class="ri-fullscreen-line"></i>
           </button>
           <button id="lb-close-btn" class="lb-action-btn close-btn" title="Close (Esc)" aria-label="Close">
@@ -266,6 +272,7 @@
         </button>
 
         <!-- Media Stage Wrapper -->
+        <div class="lightbox-ambient-glow" id="lb-ambient-glow"></div>
         <div class="lightbox-media-wrapper" id="lb-media-wrapper">
           <div class="lb-spinner" id="lb-spinner">
             <div class="spinner-circle"></div>
@@ -276,7 +283,7 @@
             alt="Expanded view" 
             draggable="false"
           >
-          <div class="zoom-indicator" id="zoom-indicator">1.6x Zoom</div>
+          <div class="zoom-indicator" id="zoom-indicator">1.8x Zoom</div>
         </div>
 
         <!-- Next Navigation Button -->
@@ -331,8 +338,10 @@
         <li><kbd>←</kbd> <kbd>→</kbd> Navigate Images</li>
         <li><kbd>Space</kbd> Play / Pause Slideshow</li>
         <li><kbd>Esc</kbd> Close Lightbox</li>
-        <li><kbd>F</kbd> Toggle Fullscreen</li>
-        <li><kbd>Z</kbd> Toggle 1.6x Zoom</li>
+        <li><kbd>F</kbd> Immersive Fullscreen Mode</li>
+        <li><kbd>H</kbd> Hide / Show UI Controls</li>
+        <li><kbd>A</kbd> Fit vs Fill Mode (Wallpaper)
+        <li><kbd>Z</kbd> Toggle 1.8x Zoom</li>
         <li><kbd>L</kbd> Like / Favorite</li>
         <li><kbd>/</kbd> Focus Search Bar</li>
       </ul>
