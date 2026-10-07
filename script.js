@@ -1,25 +1,11 @@
 /**
  * ====================================================================
  * LUMINA GALLERY — JAVASCRIPT ENGINE
- * CodeAlpha Frontend Internship Task 1: Image Gallery
- * Features:
- *   - Curated high-resolution photo dataset across multiple categories
- *   - Category filtering with count badges (Bonus Feature)
- *   - Real-time instant search (title, tags, location, photographer)
- *   - Masonry vs. Uniform Grid layout switcher
- *   - Comprehensive Lightbox modal viewer:
- *       • Next / Previous navigation with smooth transitions
- *       • Keyboard shortcuts (Arrows, Esc, F for fullscreen, Z for zoom)
- *       • Bottom interactive thumbnail filmstrip
- *       • Image zoom & pan toggle
- *       • HTML5 Fullscreen API integration
- *       • Touch swipe support for mobile/tablets
- *       • Like / Favorite system with LocalStorage persistence
- *       • High-res download trigger & toast notifications
+ * Curated Visual Arts & Contemporary Photography
  * ====================================================================
  */
 
-// --- Curated Image Dataset ---
+// --- Curated Image Dataset with Camera EXIF Specs ---
 const GALLERY_DATA = [
   {
     id: 1,
@@ -27,8 +13,8 @@ const GALLERY_DATA = [
     category: "Nature",
     author: "Luca Bravo",
     location: "Dolomites, Italy",
+    specs: "Sony α7R V • 24mm f/1.4 • 1/500s • ISO 100",
     tags: ["mountain", "alps", "fog", "morning", "hiking"],
-    aspectRatio: "3/4",
     imgUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80"
   },
@@ -38,8 +24,8 @@ const GALLERY_DATA = [
     category: "Neon & City",
     author: "Aleksandar Pasaric",
     location: "Shinjuku, Tokyo",
+    specs: "Fujifilm X-T4 • 35mm f/1.2 • 1/125s • ISO 800",
     tags: ["tokyo", "japan", "neon", "cyberpunk", "night", "rain"],
-    aspectRatio: "4/5",
     imgUrl: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80"
   },
@@ -49,8 +35,8 @@ const GALLERY_DATA = [
     category: "Architecture",
     author: "Victor Garcia",
     location: "Valencia, Spain",
+    specs: "Leica SL2 • 16-35mm f/2.8 • 1/1000s • ISO 50",
     tags: ["architecture", "curves", "modern", "minimal", "white"],
-    aspectRatio: "16/9",
     imgUrl: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80"
   },
@@ -60,8 +46,8 @@ const GALLERY_DATA = [
     category: "Nature",
     author: "Casey Horner",
     location: "Redwoods, California",
+    specs: "Nikon Z7 II • 28mm f/2.0 • 1/250s • ISO 200",
     tags: ["forest", "trees", "redwoods", "green", "sunlight"],
-    aspectRatio: "4/5",
     imgUrl: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80"
   },
@@ -71,8 +57,8 @@ const GALLERY_DATA = [
     category: "Architecture",
     author: "Ludwig Wallendorff",
     location: "Berlin, Germany",
+    specs: "Canon EOS R5 • 14mm f/4.0 • 1/60s • ISO 400",
     tags: ["stairs", "spiral", "monochrome", "geometry", "interior"],
-    aspectRatio: "3/4",
     imgUrl: "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=600&q=80"
   },
@@ -82,8 +68,8 @@ const GALLERY_DATA = [
     category: "Nature",
     author: "Jeremy Bishop",
     location: "Sahara Desert, Morocco",
+    specs: "Hasselblad X2D • 45mm f/4.0 • 1/800s • ISO 64",
     tags: ["desert", "sand", "dunes", "sunset", "warm"],
-    aspectRatio: "16/9",
     imgUrl: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80"
   },
@@ -93,8 +79,8 @@ const GALLERY_DATA = [
     category: "Neon & City",
     author: "Sean Foley",
     location: "Hong Kong",
+    specs: "Sony α7S III • 50mm f/1.2 • 1/200s • ISO 1600",
     tags: ["hong kong", "neon", "rain", "puddle", "glow", "night"],
-    aspectRatio: "3/4",
     imgUrl: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=600&q=80"
   },
@@ -104,8 +90,8 @@ const GALLERY_DATA = [
     category: "Wildlife",
     author: "Jonatan Pie",
     location: "Svalbard, Norway",
+    specs: "Sony α1 • 400mm f/2.8 • 1/2000s • ISO 400",
     tags: ["fox", "arctic", "winter", "snow", "animal", "wildlife"],
-    aspectRatio: "4/5",
     imgUrl: "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=600&q=80"
   },
@@ -115,8 +101,8 @@ const GALLERY_DATA = [
     category: "Architecture",
     author: "Simone Hutsch",
     location: "London, UK",
+    specs: "Canon 5D Mark IV • 24-70mm f/2.8 • 1/1250s • ISO 100",
     tags: ["facade", "skyscrapers", "glass", "modern", "blue"],
-    aspectRatio: "1/1",
     imgUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80"
   },
@@ -126,8 +112,8 @@ const GALLERY_DATA = [
     category: "Minimalist",
     author: "Federico Respini",
     location: "Namib-Naukluft, Namibia",
+    specs: "Leica M11 • 50mm f/1.4 • 1/1600s • ISO 64",
     tags: ["minimal", "solitude", "tree", "desert", "clean", "calm"],
-    aspectRatio: "16/9",
     imgUrl: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=600&q=80"
   },
@@ -137,8 +123,8 @@ const GALLERY_DATA = [
     category: "Wildlife",
     author: "Frida Bredesen",
     location: "Ranthambore, India",
+    specs: "Nikon D850 • 600mm f/4.0 • 1/1600s • ISO 320",
     tags: ["tiger", "wildlife", "animal", "stripes", "fierce"],
-    aspectRatio: "3/4",
     imgUrl: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=600&q=80"
   },
@@ -148,8 +134,8 @@ const GALLERY_DATA = [
     category: "Minimalist",
     author: "Ricardo Gomez",
     location: "Brasília, Brazil",
+    specs: "Fujifilm GFX 100S • 32-64mm f/4.0 • 1/800s • ISO 100",
     tags: ["minimal", "brutalism", "shadow", "sun", "monochrome"],
-    aspectRatio: "4/5",
     imgUrl: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=600&q=80"
   },
@@ -159,8 +145,8 @@ const GALLERY_DATA = [
     category: "Nature",
     author: "Bailey Zindel",
     location: "Banff, Canada",
+    specs: "Sony α7 IV • 14mm f/1.8 • 25s • ISO 3200",
     tags: ["stars", "night", "astronomy", "lake", "mountains", "galaxy"],
-    aspectRatio: "16/9",
     imgUrl: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80"
   },
@@ -170,8 +156,8 @@ const GALLERY_DATA = [
     category: "Neon & City",
     author: "Jezael Melgoza",
     location: "Shibuya, Tokyo",
+    specs: "Leica Q2 • 28mm f/1.7 • 1/160s • ISO 800",
     tags: ["crossing", "city", "lights", "crowd", "tokyo", "street"],
-    aspectRatio: "3/4",
     imgUrl: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80"
   },
@@ -181,8 +167,8 @@ const GALLERY_DATA = [
     category: "Wildlife",
     author: "Todd Cravens",
     location: "Maui, Hawaii",
+    specs: "Sony α1 • 16-35mm f/2.8 • 1/1000s • ISO 160",
     tags: ["whale", "ocean", "sea", "underwater", "wildlife", "blue"],
-    aspectRatio: "16/9",
     imgUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=85",
     thumbUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80"
   }
@@ -192,7 +178,7 @@ const GALLERY_DATA = [
 const state = {
   activeCategory: "All",
   searchQuery: "",
-  layoutMode: "masonry", // 'masonry' or 'grid'
+  layoutMode: "masonry",
   currentLightboxIndex: 0,
   isLightboxOpen: false,
   isZoomed: false,
@@ -232,6 +218,7 @@ const dom = {
   lbTotalCount: document.getElementById("lb-total-count"),
   lbCategory: document.getElementById("lb-category"),
   lbTitle: document.getElementById("lb-title"),
+  lbSpecs: document.getElementById("lb-specs"),
   lbAuthorName: document.getElementById("lb-author-name"),
   lbLocationName: document.getElementById("lb-location-name"),
   lbThumbsContainer: document.getElementById("lb-thumbs-container"),
@@ -277,7 +264,6 @@ function renderCategoryFilters() {
     `;
   }).join("");
 
-  // Attach event listeners to tabs
   dom.categoryFilters.querySelectorAll(".category-tab").forEach(tab => {
     tab.addEventListener("click", () => {
       const selectedCategory = tab.dataset.category;
@@ -336,7 +322,6 @@ function renderGalleryGrid() {
 
   dom.emptyState.classList.add("hidden");
 
-  // Create cards
   const cardsHtml = filteredData.map((item, index) => {
     const isFav = state.favorites.has(item.id);
     return `
@@ -371,10 +356,10 @@ function renderGalleryGrid() {
               <h3 class="card-title">${item.title}</h3>
               <div class="card-meta">
                 <span class="card-author">
-                  <i class="ri-camera-lens-line"></i> ${item.author}
+                  <i class="ri-user-smile-line"></i> ${item.author}
                 </span>
                 <span class="card-zoom-hint">
-                  <i class="ri-zoom-in-line"></i> View
+                  <i class="ri-fullscreen-line"></i> View
                 </span>
               </div>
             </div>
@@ -388,14 +373,12 @@ function renderGalleryGrid() {
   attachCardEvents();
 }
 
-// --- Card Interactions (Click & Keyboard Enter) ---
+// --- Card Interactions ---
 function attachCardEvents() {
   const cards = dom.galleryGrid.querySelectorAll(".gallery-card");
   
   cards.forEach(card => {
-    // Open lightbox on card click
     card.addEventListener("click", (e) => {
-      // Avoid opening lightbox if clicking the favorite button inside card
       if (e.target.closest(".card-fav-btn")) {
         const btn = e.target.closest(".card-fav-btn");
         const id = parseInt(btn.dataset.id, 10);
@@ -407,7 +390,6 @@ function attachCardEvents() {
       openLightbox(index);
     });
 
-    // Support Enter or Space key for accessibility
     card.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
@@ -431,11 +413,9 @@ function toggleFavorite(id) {
     showToast(`Saved "${item.title}" to favorites!`, "ri-heart-fill");
   }
 
-  // Persist to localStorage
   localStorage.setItem("lumina_favorites", JSON.stringify([...state.favorites]));
   updateHeaderStats();
   
-  // Re-sync active cards
   const favBtns = document.querySelectorAll(`.card-fav-btn[data-id="${id}"]`);
   favBtns.forEach(btn => {
     const isFav = state.favorites.has(id);
@@ -443,7 +423,6 @@ function toggleFavorite(id) {
     btn.innerHTML = `<i class="${isFav ? 'ri-heart-fill' : 'ri-heart-line'}"></i>`;
   });
 
-  // Re-sync lightbox fav button if currently viewing this item
   if (state.isLightboxOpen) {
     const currentItem = state.filteredData[state.currentLightboxIndex];
     if (currentItem && currentItem.id === id) {
@@ -453,7 +432,7 @@ function toggleFavorite(id) {
 }
 
 function updateHeaderStats() {
-  dom.totalCountBadge.textContent = `${GALLERY_DATA.length} Photos`;
+  dom.totalCountBadge.textContent = `${GALLERY_DATA.length} Artworks`;
   dom.favoritesCountBadge.textContent = `${state.favorites.size} Favorites`;
 }
 
@@ -462,7 +441,7 @@ function updateStatusBar() {
   if (state.searchQuery) {
     dom.resultsCount.textContent = `Showing ${count} result${count === 1 ? '' : 's'} for "${state.searchQuery}"`;
   } else if (state.activeCategory !== "All") {
-    dom.resultsCount.textContent = `Showing ${count} photo${count === 1 ? '' : 's'} in ${state.activeCategory}`;
+    dom.resultsCount.textContent = `Showing ${count} photograph${count === 1 ? '' : 's'} in ${state.activeCategory}`;
   } else {
     dom.resultsCount.textContent = `Showing all ${count} curated photographs`;
   }
@@ -479,7 +458,7 @@ function openLightbox(index) {
   state.isZoomed = false;
 
   dom.lightboxOverlay.classList.remove("hidden");
-  document.body.style.overflow = "hidden"; // Prevent background scroll
+  document.body.style.overflow = "hidden";
 
   renderLightboxImage();
   renderLightboxThumbnails();
@@ -493,7 +472,6 @@ function closeLightbox() {
   dom.lightboxOverlay.classList.add("hidden");
   document.body.style.overflow = "";
 
-  // Exit fullscreen if active
   if (document.fullscreenElement) {
     document.exitFullscreen().catch(() => {});
   }
@@ -503,16 +481,13 @@ function renderLightboxImage() {
   const item = state.filteredData[state.currentLightboxIndex];
   if (!item) return;
 
-  // Reset zoom state
   state.isZoomed = false;
   dom.lbMediaWrapper.classList.remove("zoomed");
   dom.lbZoomBtn.classList.remove("active");
 
-  // Show loading spinner & fade out previous image
   dom.lbSpinner.classList.add("active");
   dom.lbImg.style.opacity = "0";
 
-  // Preload high-res image
   const highRes = new Image();
   highRes.src = item.imgUrl;
   highRes.onload = () => {
@@ -522,17 +497,16 @@ function renderLightboxImage() {
     dom.lbImg.style.opacity = "1";
   };
   highRes.onerror = () => {
-    // Graceful fallback to thumbUrl if high-res fails
     dom.lbImg.src = item.thumbUrl;
     dom.lbSpinner.classList.remove("active");
     dom.lbImg.style.opacity = "1";
   };
 
-  // Update counters & details
   dom.lbCurrentIndex.textContent = state.currentLightboxIndex + 1;
   dom.lbTotalCount.textContent = state.filteredData.length;
   dom.lbCategory.textContent = item.category;
   dom.lbTitle.textContent = item.title;
+  if (dom.lbSpecs) dom.lbSpecs.textContent = item.specs || "High-Resolution 4K Capture";
   dom.lbAuthorName.textContent = item.author;
   dom.lbLocationName.textContent = item.location;
 
@@ -562,7 +536,6 @@ function prevLightboxImage() {
   renderLightboxImage();
 }
 
-// Lightbox Thumbnail Filmstrip
 function renderLightboxThumbnails() {
   dom.lbThumbsContainer.innerHTML = state.filteredData.map((item, index) => `
     <div 
@@ -598,7 +571,6 @@ function highlightActiveThumbnail() {
   });
 }
 
-// Toggle Image Zoom
 function toggleZoom() {
   state.isZoomed = !state.isZoomed;
   dom.lbMediaWrapper.classList.toggle("zoomed", state.isZoomed);
@@ -607,7 +579,6 @@ function toggleZoom() {
   showToast(state.isZoomed ? "Zoomed In (1.6x)" : "Zoom Reset", "ri-zoom-in-line");
 }
 
-// Toggle Fullscreen API
 function toggleFullscreen() {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen().then(() => {
@@ -626,12 +597,10 @@ function toggleFullscreen() {
   }
 }
 
-// Download High-Res Image
 function downloadCurrentImage() {
   const item = state.filteredData[state.currentLightboxIndex];
   if (!item) return;
 
-  // Open high-res in new tab or trigger download
   const link = document.createElement("a");
   link.href = item.imgUrl;
   link.target = "_blank";
@@ -640,22 +609,16 @@ function downloadCurrentImage() {
   link.click();
   document.body.removeChild(link);
 
-  showToast(`Opening high-res image: "${item.title}"`, "ri-download-2-line");
+  showToast(`Opening high-res photograph: "${item.title}"`, "ri-download-2-line");
 }
 
-// ====================================================================
-// EVENT LISTENERS & INITIALIZATION
-// ====================================================================
-
 function initEventListeners() {
-  // Search Input with debounce/immediate feedback
   dom.searchInput.addEventListener("input", (e) => {
     state.searchQuery = e.target.value;
     dom.clearSearchBtn.classList.toggle("visible", state.searchQuery.length > 0);
     filterAndRender();
   });
 
-  // Clear Search Button
   dom.clearSearchBtn.addEventListener("click", () => {
     dom.searchInput.value = "";
     state.searchQuery = "";
@@ -664,7 +627,6 @@ function initEventListeners() {
     dom.searchInput.focus();
   });
 
-  // Reset Filters from Empty State
   dom.resetFiltersBtn.addEventListener("click", () => {
     state.activeCategory = "All";
     state.searchQuery = "";
@@ -677,14 +639,12 @@ function initEventListeners() {
     showToast("Filters reset to default", "ri-restart-line");
   });
 
-  // Shuffle / Randomize
   dom.shuffleBtn.addEventListener("click", () => {
     state.filteredData.sort(() => Math.random() - 0.5);
     renderGalleryGrid();
     showToast("Gallery shuffled randomly!", "ri-shuffle-line");
   });
 
-  // Layout View Switchers (Masonry vs Grid)
   dom.viewMasonry.addEventListener("click", () => {
     if (state.layoutMode === "masonry") return;
     state.layoutMode = "masonry";
@@ -703,7 +663,6 @@ function initEventListeners() {
     dom.galleryGrid.classList.add("grid-mode");
   });
 
-  // Lightbox Navigation Controls
   dom.lbPrevBtn.addEventListener("click", prevLightboxImage);
   dom.lbNextBtn.addEventListener("click", nextLightboxImage);
   dom.lbCloseBtn.addEventListener("click", closeLightbox);
@@ -717,13 +676,10 @@ function initEventListeners() {
     if (item) toggleFavorite(item.id);
   });
 
-  // Double click image to zoom
   dom.lbImg.addEventListener("dblclick", toggleZoom);
 
-  // Global Keyboard Shortcuts
   window.addEventListener("keydown", (e) => {
     if (!state.isLightboxOpen) {
-      // Focus search if user presses "/"
       if (e.key === "/" && document.activeElement !== dom.searchInput) {
         e.preventDefault();
         dom.searchInput.focus();
@@ -757,7 +713,6 @@ function initEventListeners() {
     }
   });
 
-  // Touch Swipe Support for Mobile/Tablets
   let touchStartX = 0;
   let touchEndX = 0;
 
@@ -767,25 +722,14 @@ function initEventListeners() {
 
   dom.lightboxOverlay.addEventListener("touchend", (e) => {
     touchEndX = e.changedTouches[0].screenX;
-    handleSwipeGesture();
-  }, { passive: true });
-
-  function handleSwipeGesture() {
     const diff = touchEndX - touchStartX;
-    const threshold = 50; // min swipe distance in px
-    if (Math.abs(diff) < threshold) return;
-
-    if (diff > 0) {
-      // Swiped right -> previous image
-      prevLightboxImage();
-    } else {
-      // Swiped left -> next image
-      nextLightboxImage();
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) prevLightboxImage();
+      else nextLightboxImage();
     }
-  }
+  }, { passive: true });
 }
 
-// --- Application Entry Point ---
 function init() {
   updateHeaderStats();
   renderCategoryFilters();
@@ -793,5 +737,4 @@ function init() {
   initEventListeners();
 }
 
-// Boot up once DOM is loaded
 document.addEventListener("DOMContentLoaded", init);
