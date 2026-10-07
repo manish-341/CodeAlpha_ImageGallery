@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumina Gallery — Interactive Visual Experience | CodeAlpha</title>
+  <meta name="description" content="A responsive, interactive image gallery featuring smooth transitions, categories, search, and a full-featured lightbox viewer. Built for CodeAlpha internship.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Remix Icons for crisp modern vector icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Ambient background glow effects -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <!-- Header / Navigation -->
+  <header class="header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="logo-symbol">
+          <i class="ri-gallery-fill"></i>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">Lumina<span class="accent-dot">.</span></span>
+          <span class="logo-tag">CodeAlpha Task 1</span>
+        </div>
+      </div>
+
+      <div class="header-stats">
+        <div class="stat-pill">
+          <i class="ri-image-2-line"></i>
+          <span id="total-count-badge">0 Photos</span>
+        </div>
+        <div class="stat-pill highlight">
+          <i class="ri-heart-3-line"></i>
+          <span id="favorites-count-badge">0 Favorites</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="badge-pill">
+        <i class="ri-sparkling-fill"></i> Interactive Visual Showcase
+      </div>
+      <h1 class="hero-title">Discover Stories Through Light & Form</h1>
+      <p class="hero-subtitle">
+        Immerse yourself in a curated collection of world-class photography. Explore dynamic category filters, real-time search, and smooth lightbox viewing.
+      </p>
+    </div>
+
+    <!-- Controls Bar: Search & View Options -->
+    <div class="controls-wrapper">
+      <div class="search-box">
+        <i class="ri-search-line search-icon"></i>
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="Search by title, location, or tag (e.g. mountain, neon)..." 
+          autocomplete="off"
+        >
+        <button id="clear-search-btn" class="clear-search-btn" title="Clear search" aria-label="Clear search">
+          <i class="ri-close-line"></i>
+        </button>
+      </div>
+
+      <div class="view-toggles">
+        <button id="view-masonry" class="view-btn active" title="Masonry Layout">
+          <i class="ri-layout-masonry-line"></i>
+          <span>Masonry</span>
+        </button>
+        <button id="view-grid" class="view-btn" title="Uniform Grid Layout">
+          <i class="ri-layout-grid-line"></i>
+          <span>Grid</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Filter Tabs (Bonus Feature) -->
+    <nav class="category-nav" aria-label="Gallery category filters">
+      <div class="category-scroll" id="category-filters">
+        <!-- Rendered dynamically by script.js -->
+      </div>
+    </nav>
+  </section>
+
+  <!-- Gallery Main Display -->
+  <main class="gallery-container">
+    <!-- Active filter summary bar -->
+    <div class="gallery-status">
+      <p class="results-text" id="results-count">Showing all artworks</p>
+      <div class="quick-actions">
+        <button id="shuffle-btn" class="quick-action-btn" title="Shuffle Images">
+          <i class="ri-shuffle-line"></i> Randomize
+        </button>
+      </div>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-grid masonry-mode" id="gallery-grid">
+      <!-- Items dynamically injected via script.js -->
+    </div>
+
+    <!-- Empty State (When no filter results match) -->
+    <div class="empty-state hidden" id="empty-state">
+      <div class="empty-icon-wrap">
+        <i class="ri-image-circle-line"></i>
+      </div>
+      <h3>No matches found</h3>
+      <p>We couldn't find any images matching your current filter or search criteria.</p>
+      <button id="reset-filters-btn" class="btn-primary">
+        <i class="ri-restart-line"></i> Reset All Filters
+      </button>
+    </div>
+  </main>
+
+  <!-- Lightbox Modal Viewer -->
+  <div 
+    class="lightbox-overlay hidden" 
+    id="lightbox-overlay" 
+    role="dialog" 
+    aria-modal="true" 
+    aria-label="Image Lightbox Preview"
+  >
+    <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+
+    <div class="lightbox-container">
+      <!-- Top Action Bar -->
+      <div class="lightbox-top-bar">
+        <div class="lightbox-counter">
+          <span id="lb-current-index">1</span>
+          <span class="divider">/</span>
+          <span id="lb-total-count">12</span>
+        </div>
+
+        <div class="lightbox-actions">
+          <button id="lb-fav-btn" class="lb-action-btn" title="Toggle Favorite">
+            <i class="ri-heart-line"></i>
+          </button>
+          <button id="lb-zoom-btn" class="lb-action-btn" title="Toggle Zoom (Z)">
+            <i class="ri-zoom-in-line"></i>
+          </button>
+          <button id="lb-download-btn" class="lb-action-btn" title="Download High-Res">
+            <i class="ri-download-2-line"></i>
+          </button>
+          <button id="lb-fullscreen-btn" class="lb-action-btn" title="Fullscreen (F)">
+            <i class="ri-fullscreen-line"></i>
+          </button>
+          <button id="lb-close-btn" class="lb-action-btn close-btn" title="Close (Esc)">
+            <i class="ri-close-large-line"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Stage with Image & Navigation -->
+      <div class="lightbox-stage">
+        <!-- Previous Navigation Button -->
+        <button 
+          id="lb-prev-btn" 
+          class="lb-nav-btn prev" 
+          aria-label="Previous Image" 
+          title="Previous (Left Arrow)"
+        >
+          <i class="ri-arrow-left-s-line"></i>
+        </button>
+
+        <!-- Image Wrapper with loader and zoom support -->
+        <div class="lightbox-media-wrapper" id="lb-media-wrapper">
+          <div class="lb-spinner" id="lb-spinner">
+            <div class="spinner-circle"></div>
+          </div>
+          <img 
+            id="lb-img" 
+            src="" 
+            alt="Expanded view" 
+            draggable="false"
+          >
+        </div>
+
+        <!-- Next Navigation Button -->
+        <button 
+          id="lb-next-btn" 
+          class="lb-nav-btn next" 
+          aria-label="Next Image" 
+          title="Next (Right Arrow)"
+        >
+          <i class="ri-arrow-right-s-line"></i>
+        </button>
+      </div>
+
+      <!-- Bottom Details & Thumbnails Strip -->
+      <div class="lightbox-footer">
+        <div class="lightbox-meta">
+          <div class="meta-primary">
+            <span class="category-tag" id="lb-category">Nature</span>
+            <h3 class="meta-title" id="lb-title">Majestic Alpine Ridge</h3>
+            <p class="meta-description" id="lb-desc">A misty dawn over snow-clad peaks.</p>
+          </div>
+          <div class="meta-secondary">
+            <span class="meta-author" id="lb-author">
+              <i class="ri-camera-lens-line"></i> Photo by <strong id="lb-author-name">Alex Vance</strong>
+            </span>
+            <span class="meta-location" id="lb-location">
+              <i class="ri-map-pin-2-line"></i> <span id="lb-location-name">Swiss Alps</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Thumbnail Strip for Quick Navigation -->
+        <div class="lightbox-thumbs" id="lb-thumbs-container">
+          <!-- Thumbnails dynamically rendered -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keyboard Shortcuts Floating Helper -->
+  <aside class="shortcuts-legend">
+    <div class="shortcuts-toggle" id="shortcuts-toggle" title="Keyboard Shortcuts">
+      <i class="ri-keyboard-line"></i>
+    </div>
+    <div class="shortcuts-tooltip" id="shortcuts-tooltip">
+      <h4>Keyboard Controls</h4>
+      <ul>
+        <li><kbd>←</kbd> <kbd>→</kbd> Navigate Previous / Next</li>
+        <li><kbd>Esc</kbd> Close Lightbox</li>
+        <li><kbd>F</kbd> Toggle Fullscreen</li>
+        <li><kbd>Z</kbd> Toggle Zoom</li>
+        <li><kbd>L</kbd> Like / Favorite</li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="toast">
+    <i class="toast-icon ri-check-line"></i>
+    <span class="toast-msg">Notification message</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <p><strong>CodeAlpha Internship Task 1:</strong> Responsive Image Gallery</p>
+        <p class="sub">Crafted with semantic HTML5, modern CSS3 animations, and vanilla JavaScript.</p>
+      </div>
+      <div class="footer-right">
+        <span class="tech-badge">HTML5</span>
+        <span class="tech-badge">CSS Grid/Flex</span>
+        <span class="tech-badge">Vanilla JS</span>
+        <span class="tech-badge">Responsive</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
