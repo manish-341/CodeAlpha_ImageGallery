@@ -2,6 +2,12 @@
  * ====================================================================
  * LUMINA GALLERY — JAVASCRIPT ENGINE
  * Curated Visual Arts & Contemporary Photography
+ * Features:
+ *   - 5 Multi-Themes (Midnight Obsidian, Cyberpunk Neon, Emerald Aurora, Sunset Dusk, Luxe Light)
+ *   - Real-time CSS live color presets (Natural RAW, Vibrant, Noir, Vintage, Cyberpunk, Cold)
+ *   - Full Lightbox with auto slideshow, thumbnails filmstrip, zoom, EXIF metadata
+ *   - Instant Search & Category curation
+ *   - LocalStorage favorites system & keyboard shortcuts
  * ====================================================================
  */
 
@@ -176,6 +182,7 @@ const GALLERY_DATA = [
 
 // --- State Management ---
 const state = {
+  currentTheme: localStorage.getItem("lumina_theme") || "midnight",
   activeCategory: "All",
   activePreset: "normal",
   searchQuery: "",
@@ -206,6 +213,13 @@ const dom = {
   shuffleBtn: document.getElementById("shuffle-btn"),
   viewMasonry: document.getElementById("view-masonry"),
   viewGrid: document.getElementById("view-grid"),
+
+  // Theme Elements
+  themeSelectorWrap: document.getElementById("theme-selector-wrap"),
+  themeBtn: document.getElementById("theme-btn"),
+  themeDropdown: document.getElementById("theme-dropdown"),
+  themeActiveLabel: document.getElementById("theme-active-label"),
+  themeActiveIcon: document.getElementById("theme-active-icon"),
 
   // Lightbox elements
   lightboxOverlay: document.getElementById("lightbox-overlay"),
@@ -248,6 +262,77 @@ function showToast(message, icon = "ri-check-line") {
   toastTimeout = setTimeout(() => {
     dom.toast.classList.remove("show");
   }, 2600);
+}
+
+// --- Theme Management System ---
+const THEME_NAMES = {
+  midnight: "Midnight",
+  cyberpunk: "Cyberpunk",
+  aurora: "Aurora",
+  sunset: "Sunset",
+  light: "Luxe Light"
+};
+
+function initThemeSystem() {
+  applyTheme(state.currentTheme, false);
+
+  // Toggle Dropdown
+  dom.themeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isClosed = dom.themeDropdown.classList.contains("hidden");
+    if (isClosed) {
+      openThemeDropdown();
+    } else {
+      closeThemeDropdown();
+    }
+  });
+
+  // Select Option
+  dom.themeDropdown.querySelectorAll(".theme-option").forEach(opt => {
+    opt.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const selectedTheme = opt.dataset.theme;
+      applyTheme(selectedTheme, true);
+      closeThemeDropdown();
+    });
+  });
+
+  // Close when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!dom.themeSelectorWrap.contains(e.target)) {
+      closeThemeDropdown();
+    }
+  });
+}
+
+function openThemeDropdown() {
+  dom.themeDropdown.classList.remove("hidden");
+  dom.themeSelectorWrap.classList.add("open");
+  dom.themeBtn.setAttribute("aria-expanded", "true");
+}
+
+function closeThemeDropdown() {
+  dom.themeDropdown.classList.add("hidden");
+  dom.themeSelectorWrap.classList.remove("open");
+  dom.themeBtn.setAttribute("aria-expanded", "false");
+}
+
+function applyTheme(themeKey, showToastNotification = true) {
+  state.currentTheme = themeKey;
+  document.documentElement.setAttribute("data-theme", themeKey);
+  localStorage.setItem("lumina_theme", themeKey);
+
+  // Update UI Label
+  dom.themeActiveLabel.textContent = THEME_NAMES[themeKey] || "Midnight";
+
+  // Update Option Active States
+  dom.themeDropdown.querySelectorAll(".theme-option").forEach(opt => {
+    opt.classList.toggle("active", opt.dataset.theme === themeKey);
+  });
+
+  if (showToastNotification) {
+    showToast(`Switched to ${THEME_NAMES[themeKey]} Theme`, "ri-palette-line");
+  }
 }
 
 // --- Category Extraction & Rendering ---
@@ -309,7 +394,6 @@ function initPresetFilters() {
       const preset = tab.dataset.preset;
       state.activePreset = preset;
 
-      // Swap class on galleryGrid
       dom.galleryGrid.className = `gallery-grid ${state.layoutMode}-mode preset-${preset}`;
       showToast(`Applied preset: ${tab.textContent.trim()}`, "ri-magic-line");
     });
@@ -822,6 +906,7 @@ function initEventListeners() {
 }
 
 function init() {
+  initThemeSystem();
   updateHeaderStats();
   renderCategoryFilters();
   initPresetFilters();

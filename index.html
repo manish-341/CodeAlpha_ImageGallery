@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="midnight">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lumina — Contemporary Visual Arts & Photography Exhibition</title>
-  <meta name="description" content="An interactive photography exhibition platform featuring curated visual collections, real-time CSS color filters, instant search, and a cinematic lightbox viewer.">
+  <meta name="description" content="An interactive photography exhibition platform featuring curated visual collections, multiple dynamic themes, real-time CSS color filters, instant search, and a cinematic lightbox viewer.">
   
   <!-- Premium Google Fonts: Outfit & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,8 +35,46 @@
         </div>
       </a>
 
-      <!-- Quick Metrics & Actions -->
+      <!-- Quick Metrics, Favorites & Theme Switcher -->
       <div class="header-right">
+        <!-- Interactive Theme Switcher Dropdown -->
+        <div class="theme-selector-wrap" id="theme-selector-wrap">
+          <button id="theme-btn" class="stat-pill theme-toggle-btn" title="Switch Visual Theme" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-palette-line" id="theme-active-icon"></i>
+            <span id="theme-active-label">Midnight</span>
+            <i class="ri-arrow-down-s-line chevron-icon"></i>
+          </button>
+          
+          <div class="theme-dropdown hidden" id="theme-dropdown" role="menu">
+            <div class="dropdown-header">Select Gallery Theme</div>
+            <button class="theme-option active" data-theme="midnight" role="menuitem">
+              <span class="theme-dot dot-midnight"></span>
+              <span class="theme-name">Midnight Obsidian</span>
+              <i class="ri-check-line checkmark"></i>
+            </button>
+            <button class="theme-option" data-theme="cyberpunk" role="menuitem">
+              <span class="theme-dot dot-cyberpunk"></span>
+              <span class="theme-name">Cyberpunk Neon</span>
+              <i class="ri-check-line checkmark"></i>
+            </button>
+            <button class="theme-option" data-theme="aurora" role="menuitem">
+              <span class="theme-dot dot-aurora"></span>
+              <span class="theme-name">Emerald Aurora</span>
+              <i class="ri-check-line checkmark"></i>
+            </button>
+            <button class="theme-option" data-theme="sunset" role="menuitem">
+              <span class="theme-dot dot-sunset"></span>
+              <span class="theme-name">Sunset Dusk</span>
+              <i class="ri-check-line checkmark"></i>
+            </button>
+            <button class="theme-option" data-theme="light" role="menuitem">
+              <span class="theme-dot dot-light"></span>
+              <span class="theme-name">Luxe Light</span>
+              <i class="ri-check-line checkmark"></i>
+            </button>
+          </div>
+        </div>
+
         <div class="stat-pill" title="Total Curated Artworks">
           <i class="ri-gallery-line"></i>
           <span id="total-count-badge">15 Artworks</span>
@@ -62,7 +100,7 @@
         Discover Stories Through <span class="gradient-text">Light & Form</span>
       </h1>
       <p class="hero-subtitle">
-        An immersive visual showcase of award-winning global photography. Experience real-time live color grading, smart category curation, and cinematic full-screen viewing.
+        An immersive visual showcase of award-winning global photography. Switch between 5 rich themes, experience live color grading, smart category curation, and cinematic full-screen viewing.
       </p>
     </div>
 
@@ -315,14 +353,14 @@
           <span class="footer-logo">Lumina<span class="accent-dot">.</span></span>
           <span class="footer-edition">Curated Visual Exhibition</span>
         </div>
-        <p class="sub">Crafted with semantic HTML5, modern CSS3 animations, live color grading, and vanilla JavaScript.</p>
+        <p class="sub">Crafted with semantic HTML5, modern CSS3 animations, 5 visual themes, live color grading, and vanilla JavaScript.</p>
       </div>
       <div class="footer-right">
         <span class="tech-badge">HTML5</span>
         <span class="tech-badge">CSS Grid & Columns</span>
-        <span class="tech-badge">Live CSS Presets</span>
+        <span class="tech-badge">5 Multi-Themes</span>
+        <span class="tech-badge">Live Presets</span>
         <span class="tech-badge">Vanilla ES6+</span>
-        <span class="tech-badge">A11y Friendly</span>
       </div>
     </div>
   </footer>
