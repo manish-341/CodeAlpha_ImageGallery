@@ -177,11 +177,15 @@ const GALLERY_DATA = [
 // --- State Management ---
 const state = {
   activeCategory: "All",
+  activePreset: "normal",
   searchQuery: "",
   layoutMode: "masonry",
+  showFavoritesOnly: false,
   currentLightboxIndex: 0,
   isLightboxOpen: false,
   isZoomed: false,
+  isSlideshowRunning: false,
+  slideshowTimer: null,
   favorites: new Set(JSON.parse(localStorage.getItem("lumina_favorites") || "[]")),
   filteredData: [...GALLERY_DATA]
 };
@@ -190,11 +194,13 @@ const state = {
 const dom = {
   galleryGrid: document.getElementById("gallery-grid"),
   categoryFilters: document.getElementById("category-filters"),
+  presetFilters: document.getElementById("preset-filters"),
   searchInput: document.getElementById("search-input"),
   clearSearchBtn: document.getElementById("clear-search-btn"),
   resultsCount: document.getElementById("results-count"),
   totalCountBadge: document.getElementById("total-count-badge"),
   favoritesCountBadge: document.getElementById("favorites-count-badge"),
+  viewFavoritesPill: document.getElementById("view-favorites-pill"),
   emptyState: document.getElementById("empty-state"),
   resetFiltersBtn: document.getElementById("reset-filters-btn"),
   shuffleBtn: document.getElementById("shuffle-btn"),
@@ -212,6 +218,7 @@ const dom = {
   lbCloseBtn: document.getElementById("lb-close-btn"),
   lbFavBtn: document.getElementById("lb-fav-btn"),
   lbZoomBtn: document.getElementById("lb-zoom-btn"),
+  lbSlideshowBtn: document.getElementById("lb-slideshow-btn"),
   lbFullscreenBtn: document.getElementById("lb-fullscreen-btn"),
   lbDownloadBtn: document.getElementById("lb-download-btn"),
   lbCurrentIndex: document.getElementById("lb-current-index"),
@@ -240,7 +247,7 @@ function showToast(message, icon = "ri-check-line") {
   dom.toast.classList.add("show");
   toastTimeout = setTimeout(() => {
     dom.toast.classList.remove("show");
-  }, 2800);
+  }, 2600);
 }
 
 // --- Category Extraction & Rendering ---
@@ -253,7 +260,7 @@ function renderCategoryFilters() {
       : GALLERY_DATA.filter(i => i.category === cat).length;
     
     const icon = getCategoryIcon(cat);
-    const isActive = cat === state.activeCategory ? "active" : "";
+    const isActive = cat === state.activeCategory && !state.showFavoritesOnly ? "active" : "";
 
     return `
       <button class="category-tab ${isActive}" data-category="${cat}">
@@ -266,6 +273,7 @@ function renderCategoryFilters() {
 
   dom.categoryFilters.querySelectorAll(".category-tab").forEach(tab => {
     tab.addEventListener("click", () => {
+      state.showFavoritesOnly = false;
       const selectedCategory = tab.dataset.category;
       if (state.activeCategory === selectedCategory) return;
       
@@ -290,11 +298,30 @@ function getCategoryIcon(category) {
   }
 }
 
+// --- Real-Time CSS Color Grading Presets ---
+function initPresetFilters() {
+  const presetTabs = dom.presetFilters.querySelectorAll(".preset-tab");
+  presetTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      presetTabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      const preset = tab.dataset.preset;
+      state.activePreset = preset;
+
+      // Swap class on galleryGrid
+      dom.galleryGrid.className = `gallery-grid ${state.layoutMode}-mode preset-${preset}`;
+      showToast(`Applied preset: ${tab.textContent.trim()}`, "ri-magic-line");
+    });
+  });
+}
+
 // --- Filter and Search Logic ---
 function filterAndRender() {
   const query = state.searchQuery.toLowerCase().trim();
 
   state.filteredData = GALLERY_DATA.filter(item => {
+    const matchesFavorites = !state.showFavoritesOnly || state.favorites.has(item.id);
     const matchesCategory = state.activeCategory === "All" || item.category === state.activeCategory;
     const matchesSearch = !query || (
       item.title.toLowerCase().includes(query) ||
@@ -303,7 +330,7 @@ function filterAndRender() {
       item.location.toLowerCase().includes(query) ||
       item.tags.some(tag => tag.toLowerCase().includes(query))
     );
-    return matchesCategory && matchesSearch;
+    return matchesFavorites && matchesCategory && matchesSearch;
   });
 
   renderGalleryGrid();
@@ -339,9 +366,15 @@ function renderGalleryGrid() {
             loading="lazy"
             onload="this.parentElement.classList.remove('skeleton')"
           >
+          <div class="card-quick-view">
+            <i class="ri-fullscreen-line"></i> Quick View
+          </div>
           <div class="card-overlay">
             <div class="card-top">
-              <span class="card-category-tag">${item.category}</span>
+              <div class="card-tags-group">
+                <span class="card-category-tag">${item.category}</span>
+                <span class="card-raw-tag">4K RAW</span>
+              </div>
               <button 
                 class="card-fav-btn ${isFav ? 'favorited' : ''}" 
                 data-id="${item.id}"
@@ -358,8 +391,8 @@ function renderGalleryGrid() {
                 <span class="card-author">
                   <i class="ri-user-smile-line"></i> ${item.author}
                 </span>
-                <span class="card-zoom-hint">
-                  <i class="ri-fullscreen-line"></i> View
+                <span class="card-location">
+                  <i class="ri-map-pin-2-line"></i> ${item.location}
                 </span>
               </div>
             </div>
@@ -429,6 +462,10 @@ function toggleFavorite(id) {
       updateLightboxFavBtn();
     }
   }
+
+  if (state.showFavoritesOnly) {
+    filterAndRender();
+  }
 }
 
 function updateHeaderStats() {
@@ -438,7 +475,9 @@ function updateHeaderStats() {
 
 function updateStatusBar() {
   const count = state.filteredData.length;
-  if (state.searchQuery) {
+  if (state.showFavoritesOnly) {
+    dom.resultsCount.textContent = `Showing ${count} favorited photograph${count === 1 ? '' : 's'}`;
+  } else if (state.searchQuery) {
     dom.resultsCount.textContent = `Showing ${count} result${count === 1 ? '' : 's'} for "${state.searchQuery}"`;
   } else if (state.activeCategory !== "All") {
     dom.resultsCount.textContent = `Showing ${count} photograph${count === 1 ? '' : 's'} in ${state.activeCategory}`;
@@ -465,6 +504,7 @@ function openLightbox(index) {
 }
 
 function closeLightbox() {
+  stopSlideshow();
   state.isLightboxOpen = false;
   state.isZoomed = false;
   dom.lbMediaWrapper.classList.remove("zoomed");
@@ -506,7 +546,9 @@ function renderLightboxImage() {
   dom.lbTotalCount.textContent = state.filteredData.length;
   dom.lbCategory.textContent = item.category;
   dom.lbTitle.textContent = item.title;
-  if (dom.lbSpecs) dom.lbSpecs.textContent = item.specs || "High-Resolution 4K Capture";
+  if (dom.lbSpecs) {
+    dom.lbSpecs.innerHTML = `<i class="ri-camera-3-line"></i> ${item.specs || "High-Resolution 4K Capture"}`;
+  }
   dom.lbAuthorName.textContent = item.author;
   dom.lbLocationName.textContent = item.location;
 
@@ -534,6 +576,38 @@ function prevLightboxImage() {
   if (!state.isLightboxOpen || state.filteredData.length <= 1) return;
   state.currentLightboxIndex = (state.currentLightboxIndex - 1 + state.filteredData.length) % state.filteredData.length;
   renderLightboxImage();
+}
+
+function toggleSlideshow() {
+  if (state.isSlideshowRunning) {
+    stopSlideshow();
+    showToast("Slideshow Paused", "ri-pause-line");
+  } else {
+    startSlideshow();
+    showToast("Slideshow Started (3.5s interval)", "ri-play-line");
+  }
+}
+
+function startSlideshow() {
+  state.isSlideshowRunning = true;
+  dom.lbSlideshowBtn.classList.add("playing");
+  dom.lbSlideshowBtn.innerHTML = `<i class="ri-pause-line"></i>`;
+  dom.lbSlideshowBtn.title = "Pause Slideshow (Space)";
+  
+  state.slideshowTimer = setInterval(() => {
+    nextLightboxImage();
+  }, 3500);
+}
+
+function stopSlideshow() {
+  state.isSlideshowRunning = false;
+  if (state.slideshowTimer) {
+    clearInterval(state.slideshowTimer);
+    state.slideshowTimer = null;
+  }
+  dom.lbSlideshowBtn.classList.remove("playing");
+  dom.lbSlideshowBtn.innerHTML = `<i class="ri-play-line"></i>`;
+  dom.lbSlideshowBtn.title = "Start Slideshow (Space)";
 }
 
 function renderLightboxThumbnails() {
@@ -585,7 +659,7 @@ function toggleFullscreen() {
       dom.lbFullscreenBtn.innerHTML = `<i class="ri-fullscreen-exit-line"></i>`;
       showToast("Entered Fullscreen mode", "ri-fullscreen-line");
     }).catch(err => {
-      console.warn("Fullscreen request error:", err);
+      console.warn("Fullscreen error:", err);
     });
   } else {
     document.exitFullscreen().then(() => {
@@ -627,8 +701,20 @@ function initEventListeners() {
     dom.searchInput.focus();
   });
 
+  dom.viewFavoritesPill.addEventListener("click", () => {
+    state.showFavoritesOnly = !state.showFavoritesOnly;
+    dom.viewFavoritesPill.classList.toggle("active", state.showFavoritesOnly);
+    if (state.showFavoritesOnly) {
+      showToast(`Filtering ${state.favorites.size} favorited artworks`, "ri-heart-fill");
+    } else {
+      showToast("Showing all artworks", "ri-gallery-line");
+    }
+    filterAndRender();
+  });
+
   dom.resetFiltersBtn.addEventListener("click", () => {
     state.activeCategory = "All";
+    state.showFavoritesOnly = false;
     state.searchQuery = "";
     dom.searchInput.value = "";
     dom.clearSearchBtn.classList.remove("visible");
@@ -668,6 +754,7 @@ function initEventListeners() {
   dom.lbCloseBtn.addEventListener("click", closeLightbox);
   dom.lightboxBackdrop.addEventListener("click", closeLightbox);
   dom.lbZoomBtn.addEventListener("click", toggleZoom);
+  dom.lbSlideshowBtn.addEventListener("click", toggleSlideshow);
   dom.lbFullscreenBtn.addEventListener("click", toggleFullscreen);
   dom.lbDownloadBtn.addEventListener("click", downloadCurrentImage);
 
@@ -688,6 +775,10 @@ function initEventListeners() {
     }
 
     switch (e.key) {
+      case " ":
+        e.preventDefault();
+        toggleSlideshow();
+        break;
       case "ArrowRight":
         nextLightboxImage();
         break;
@@ -733,6 +824,7 @@ function initEventListeners() {
 function init() {
   updateHeaderStats();
   renderCategoryFilters();
+  initPresetFilters();
   filterAndRender();
   initEventListeners();
 }

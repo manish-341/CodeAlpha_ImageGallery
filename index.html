@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lumina — Contemporary Visual Arts & Photography Gallery</title>
-  <meta name="description" content="An interactive photography exhibition platform featuring curated visual collections, category filtering, instant search, and full-screen lightbox viewing.">
+  <title>Lumina — Contemporary Visual Arts & Photography Exhibition</title>
+  <meta name="description" content="An interactive photography exhibition platform featuring curated visual collections, real-time CSS color filters, instant search, and a cinematic lightbox viewer.">
   
-  <!-- Modern Google Fonts: Outfit & Plus Jakarta Sans -->
+  <!-- Premium Google Fonts: Outfit & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Remix Icons for crisp modern vector icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
@@ -22,7 +22,7 @@
   <div class="ambient-glow glow-2"></div>
   <div class="ambient-glow glow-3"></div>
 
-  <!-- Header / Navigation -->
+  <!-- Header / Navigation Bar -->
   <header class="header">
     <div class="header-container">
       <a href="#" class="brand">
@@ -35,85 +35,127 @@
         </div>
       </a>
 
-      <div class="header-stats">
+      <!-- Quick Metrics & Actions -->
+      <div class="header-right">
         <div class="stat-pill" title="Total Curated Artworks">
           <i class="ri-gallery-line"></i>
           <span id="total-count-badge">15 Artworks</span>
         </div>
-        <div class="stat-pill highlight" title="Saved to Favorites">
+        <button id="view-favorites-pill" class="stat-pill highlight-pill" title="Filter Favorited Artworks">
           <i class="ri-heart-3-fill"></i>
           <span id="favorites-count-badge">0 Favorites</span>
-        </div>
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- Hero Section -->
+  <!-- Compact, High-Impact Hero Section -->
   <section class="hero-section">
     <div class="hero-content">
       <div class="badge-pill">
         <span class="pulse-dot"></span>
         <span>Curated Photography Exhibition • 2026</span>
+        <span class="badge-separator">|</span>
+        <span class="badge-accent">Ultra HD 4K</span>
       </div>
-      <h1 class="hero-title">Discover Stories Through Light & Form</h1>
+      <h1 class="hero-title">
+        Discover Stories Through <span class="gradient-text">Light & Form</span>
+      </h1>
       <p class="hero-subtitle">
-        Explore a handpicked compilation of award-winning global photography. Filter by perspective, search instantly across artists and locations, or expand into cinematic lightbox view.
+        An immersive visual showcase of award-winning global photography. Experience real-time live color grading, smart category curation, and cinematic full-screen viewing.
       </p>
     </div>
 
-    <!-- Controls Bar: Search & View Options -->
-    <div class="controls-wrapper">
-      <div class="search-box">
-        <i class="ri-search-2-line search-icon"></i>
-        <input 
-          type="text" 
-          id="search-input" 
-          placeholder="Search by title, location, artist or tags (e.g. Tokyo, Alps, Rain)..." 
-          autocomplete="off"
-        >
-        <button id="clear-search-btn" class="clear-search-btn" title="Clear search" aria-label="Clear search">
-          <i class="ri-close-line"></i>
-        </button>
+    <!-- Main Interactive Controls Bar -->
+    <div class="controls-card">
+      <div class="controls-top">
+        <!-- Search Bar -->
+        <div class="search-box">
+          <i class="ri-search-2-line search-icon"></i>
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search by title, location, artist or tags (e.g. Tokyo, Alps, Rain, Fox)..." 
+            autocomplete="off"
+            aria-label="Search gallery images"
+          >
+          <button id="clear-search-btn" class="clear-search-btn" title="Clear search" aria-label="Clear search">
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+
+        <!-- View Switchers (Masonry vs Grid) -->
+        <div class="view-toggles">
+          <button id="view-masonry" class="view-btn active" title="Dynamic Masonry Flow">
+            <i class="ri-layout-masonry-fill"></i>
+            <span>Masonry</span>
+          </button>
+          <button id="view-grid" class="view-btn" title="Uniform Grid">
+            <i class="ri-grid-fill"></i>
+            <span>Grid</span>
+          </button>
+        </div>
       </div>
 
-      <div class="view-toggles">
-        <button id="view-masonry" class="view-btn active" title="Masonry Dynamic Flow">
-          <i class="ri-layout-masonry-fill"></i>
-          <span>Masonry</span>
-        </button>
-        <button id="view-grid" class="view-btn" title="Clean Uniform Grid">
-          <i class="ri-grid-fill"></i>
-          <span>Grid</span>
-        </button>
+      <!-- Category Filter Pills -->
+      <div class="filter-row">
+        <div class="filter-label">
+          <i class="ri-price-tag-3-line"></i>
+          <span>Categories:</span>
+        </div>
+        <nav class="category-scroll" id="category-filters" aria-label="Category filters">
+          <!-- Dynamically populated by script.js -->
+        </nav>
+      </div>
+
+      <!-- Real-Time CSS Color Grading Presets (Bonus: Image Filters) -->
+      <div class="filter-row presets-row">
+        <div class="filter-label">
+          <i class="ri-magic-line"></i>
+          <span>Live Color Preset:</span>
+        </div>
+        <div class="preset-scroll" id="preset-filters">
+          <button class="preset-tab active" data-preset="normal">
+            <i class="ri-sparkling-line"></i> Natural RAW
+          </button>
+          <button class="preset-tab" data-preset="vibrant">
+            <i class="ri-contrast-drop-2-line"></i> Vibrant Glow
+          </button>
+          <button class="preset-tab" data-preset="noir">
+            <i class="ri-contrast-2-line"></i> Noir Monochrome
+          </button>
+          <button class="preset-tab" data-preset="vintage">
+            <i class="ri-camera-lens-line"></i> 70s Vintage
+          </button>
+          <button class="preset-tab" data-preset="cyberpunk">
+            <i class="ri-flashlight-line"></i> Cyberpunk Neon
+          </button>
+          <button class="preset-tab" data-preset="cold">
+            <i class="ri-snow-line"></i> Cinematic Cold
+          </button>
+        </div>
       </div>
     </div>
-
-    <!-- Category Filter Tabs -->
-    <nav class="category-nav" aria-label="Gallery category filters">
-      <div class="category-scroll" id="category-filters">
-        <!-- Rendered dynamically by script.js -->
-      </div>
-    </nav>
   </section>
 
-  <!-- Gallery Main Display -->
+  <!-- Gallery Main Section -->
   <main class="gallery-container">
-    <!-- Active filter summary bar -->
+    <!-- Active Status & Actions Bar -->
     <div class="gallery-status">
       <div class="status-left">
-        <span class="active-indicator"></span>
-        <p class="results-text" id="results-count">Showing all curated photographs</p>
+        <span class="status-dot"></span>
+        <p class="results-text" id="results-count">Showing all 15 curated photographs</p>
       </div>
       <div class="quick-actions">
         <button id="shuffle-btn" class="quick-action-btn" title="Shuffle Display Order">
-          <i class="ri-shuffle-line"></i> Shuffle Order
+          <i class="ri-shuffle-line"></i> Shuffle
         </button>
       </div>
     </div>
 
-    <!-- Gallery Grid (Supports dynamic Masonry and Grid modes) -->
-    <div class="gallery-grid masonry-mode" id="gallery-grid">
-      <!-- Items dynamically injected via script.js -->
+    <!-- Gallery Grid -->
+    <div class="gallery-grid masonry-mode preset-normal" id="gallery-grid">
+      <!-- Cards dynamically rendered by script.js -->
     </div>
 
     <!-- Empty State -->
@@ -121,10 +163,10 @@
       <div class="empty-icon-wrap">
         <i class="ri-search-eye-line"></i>
       </div>
-      <h3>No matches found</h3>
-      <p>We couldn't find any photos matching your current query. Try searching for something else or reset your filters.</p>
+      <h3>No matching photographs found</h3>
+      <p>We couldn't find any artwork matching your current search or category filter.</p>
       <button id="reset-filters-btn" class="btn-primary">
-        <i class="ri-refresh-line"></i> Reset Filters
+        <i class="ri-refresh-line"></i> Reset All Filters
       </button>
     </div>
   </main>
@@ -140,28 +182,34 @@
     <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
 
     <div class="lightbox-container">
-      <!-- Top Action Bar -->
+      <!-- Lightbox Header Controls -->
       <div class="lightbox-top-bar">
-        <div class="lightbox-counter">
-          <span id="lb-current-index">1</span>
-          <span class="divider">/</span>
-          <span id="lb-total-count">15</span>
+        <div class="lightbox-badge-wrap">
+          <div class="lightbox-counter">
+            <span id="lb-current-index">1</span>
+            <span class="divider">/</span>
+            <span id="lb-total-count">15</span>
+          </div>
+          <span class="hd-badge">4K MASTER</span>
         </div>
 
         <div class="lightbox-actions">
-          <button id="lb-fav-btn" class="lb-action-btn" title="Favorite Artwork (L)" aria-label="Favorite">
+          <button id="lb-slideshow-btn" class="lb-action-btn" title="Toggle Auto Slideshow (Space)" aria-label="Slideshow">
+            <i class="ri-play-line"></i>
+          </button>
+          <button id="lb-fav-btn" class="lb-action-btn" title="Favorite (L)" aria-label="Favorite">
             <i class="ri-heart-line"></i>
           </button>
           <button id="lb-zoom-btn" class="lb-action-btn" title="Toggle Zoom (Z)" aria-label="Zoom">
             <i class="ri-zoom-in-line"></i>
           </button>
-          <button id="lb-download-btn" class="lb-action-btn" title="Download High-Res" aria-label="Download">
+          <button id="lb-download-btn" class="lb-action-btn" title="Download High-Res Photograph" aria-label="Download">
             <i class="ri-download-2-line"></i>
           </button>
           <button id="lb-fullscreen-btn" class="lb-action-btn" title="Fullscreen (F)" aria-label="Fullscreen">
             <i class="ri-fullscreen-line"></i>
           </button>
-          <button id="lb-close-btn" class="lb-action-btn close-btn" title="Close Lightbox (Esc)" aria-label="Close">
+          <button id="lb-close-btn" class="lb-action-btn close-btn" title="Close (Esc)" aria-label="Close">
             <i class="ri-close-large-line"></i>
           </button>
         </div>
@@ -173,13 +221,13 @@
         <button 
           id="lb-prev-btn" 
           class="lb-nav-btn prev" 
-          aria-label="Previous Image" 
+          aria-label="Previous Photograph" 
           title="Previous (Left Arrow)"
         >
           <i class="ri-arrow-left-s-line"></i>
         </button>
 
-        <!-- Image Wrapper with loader and zoom support -->
+        <!-- Media Stage Wrapper -->
         <div class="lightbox-media-wrapper" id="lb-media-wrapper">
           <div class="lb-spinner" id="lb-spinner">
             <div class="spinner-circle"></div>
@@ -190,13 +238,14 @@
             alt="Expanded view" 
             draggable="false"
           >
+          <div class="zoom-indicator" id="zoom-indicator">1.6x Zoom</div>
         </div>
 
         <!-- Next Navigation Button -->
         <button 
           id="lb-next-btn" 
           class="lb-nav-btn next" 
-          aria-label="Next Image" 
+          aria-label="Next Photograph" 
           title="Next (Right Arrow)"
         >
           <i class="ri-arrow-right-s-line"></i>
@@ -210,37 +259,40 @@
             <span class="category-tag" id="lb-category">Nature</span>
             <div class="meta-text-wrap">
               <h3 class="meta-title" id="lb-title">Misty Alpine Ridge</h3>
-              <p class="meta-specs" id="lb-specs">Sony α7R V • 24mm f/1.4 • ISO 100</p>
+              <p class="meta-specs" id="lb-specs">
+                <i class="ri-camera-3-line"></i> Sony α7R V • 24mm f/1.4 • 1/500s • ISO 100
+              </p>
             </div>
           </div>
           <div class="meta-secondary">
             <span class="meta-author" id="lb-author">
-              <i class="ri-user-smile-line"></i> Captured by <strong id="lb-author-name">Luca Bravo</strong>
+              <i class="ri-user-star-line"></i> Captured by <strong id="lb-author-name">Luca Bravo</strong>
             </span>
             <span class="meta-location" id="lb-location">
-              <i class="ri-map-pin-2-line"></i> <span id="lb-location-name">Dolomites, Italy</span>
+              <i class="ri-map-pin-2-fill"></i> <span id="lb-location-name">Dolomites, Italy</span>
             </span>
           </div>
         </div>
 
-        <!-- Thumbnail Strip for Quick Navigation -->
+        <!-- Interactive Thumbnail Filmstrip -->
         <div class="lightbox-thumbs" id="lb-thumbs-container">
-          <!-- Thumbnails dynamically rendered -->
+          <!-- Dynamically populated by script.js -->
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Keyboard Shortcuts Floating Helper -->
+  <!-- Keyboard Shortcuts Guide Button -->
   <aside class="shortcuts-legend">
-    <div class="shortcuts-toggle" id="shortcuts-toggle" title="Keyboard Shortcuts Guide">
+    <button class="shortcuts-toggle" id="shortcuts-toggle" title="Keyboard Shortcuts Guide" aria-label="Keyboard Shortcuts">
       <i class="ri-keyboard-line"></i>
-    </div>
+    </button>
     <div class="shortcuts-tooltip" id="shortcuts-tooltip">
       <h4>Keyboard Quick Actions</h4>
       <ul>
-        <li><kbd>←</kbd> <kbd>→</kbd> Navigate Previous / Next</li>
-        <li><kbd>Esc</kbd> Close Lightbox View</li>
+        <li><kbd>←</kbd> <kbd>→</kbd> Navigate Images</li>
+        <li><kbd>Space</kbd> Play / Pause Slideshow</li>
+        <li><kbd>Esc</kbd> Close Lightbox</li>
         <li><kbd>F</kbd> Toggle Fullscreen</li>
         <li><kbd>Z</kbd> Toggle 1.6x Zoom</li>
         <li><kbd>L</kbd> Like / Favorite</li>
@@ -261,15 +313,16 @@
       <div class="footer-left">
         <div class="footer-brand">
           <span class="footer-logo">Lumina<span class="accent-dot">.</span></span>
-          <span class="footer-edition">Curated Photography Exhibition</span>
+          <span class="footer-edition">Curated Visual Exhibition</span>
         </div>
-        <p class="sub">Crafted with semantic HTML5, modern CSS3 animations, and vanilla JavaScript.</p>
+        <p class="sub">Crafted with semantic HTML5, modern CSS3 animations, live color grading, and vanilla JavaScript.</p>
       </div>
       <div class="footer-right">
         <span class="tech-badge">HTML5</span>
-        <span class="tech-badge">CSS Grid & Flexbox</span>
+        <span class="tech-badge">CSS Grid & Columns</span>
+        <span class="tech-badge">Live CSS Presets</span>
         <span class="tech-badge">Vanilla ES6+</span>
-        <span class="tech-badge">Fully Responsive</span>
+        <span class="tech-badge">A11y Friendly</span>
       </div>
     </div>
   </footer>
