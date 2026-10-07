@@ -4,25 +4,29 @@
 ![Tech Stack](https://img.shields.io/badge/Stack-HTML5%20%7C%20CSS3%20%7C%20Vanilla%20JS-blue?style=for-the-badge)
 ![Responsive](https://img.shields.io/badge/Design-Fully%20Responsive-purple?style=for-the-badge)
 
-A modern, high-performance, and visually immersive **Interactive Image Gallery** built with semantic HTML5, modern CSS3 layout and animations, and vanilla JavaScript for CodeAlpha's Frontend Development Internship.
+A modern, high-performance, and visually immersive **Interactive Image Gallery** built with semantic HTML5, modern CSS3 layout and animations, and vanilla JavaScript for the **CodeAlpha Frontend Development Internship**.
 
 ---
 
-## 📸 Overview & Features
+## 📸 Key Features
 
-### Core Task Requirements:
-- ✅ **HTML5 & CSS3 Layout:** Clean, semantic structure with both Masonry and Uniform Grid modes.
-- ✅ **JavaScript Navigation:** Full-featured Lightbox viewer with Next & Previous buttons, smooth transitions, and keyboard controls.
-- ✅ **Hover Effects & Transitions:** Subtle 3D card lift, scale zoom, smooth gradient overlay reveal, and glowing accent borders.
-- ✅ **Responsive Design:** Fluid multi-column layout adapting seamlessly from 4K down to mobile phone viewports.
-- ✅ **Bonus Features:**
-  - 🏷️ **Dynamic Category Filtering:** Filter through Nature, Architecture, Neon & City, Wildlife, and Minimalist with live item counters.
-  - 🔍 **Real-Time Instant Search:** Filter photographs dynamically by title, photographer, location, or descriptive tags.
-  - 🎞️ **Interactive Thumbnail Filmstrip:** Jump directly to any photo inside the lightbox with active auto-centering.
-  - ⌨️ **Keyboard Controls:** Full support for `ArrowLeft`, `ArrowRight`, `Escape`, `F` (Fullscreen), `Z` (Zoom), and `L` (Like).
-  - 📱 **Mobile Touch Gestures:** Swipe left/right support for tablets and mobile devices.
+- **Semantic HTML5 & Modern CSS3:** Engineered with clean semantic markup, CSS custom properties (variables), and flexible CSS Grid / Masonry column layouts.
+- **Dynamic Lightbox Modal Viewer:**
+  - Full-screen modal overlay with glassmorphism backdrop blur.
+  - Previous (<kbd>←</kbd>) and Next (<kbd>→</kbd>) navigation buttons with seamless wrap-around.
+  - High-resolution image preloading with loading spinners.
+  - Interactive thumbnail filmstrip for instant jumping between photos.
+- **Smooth Animations & Micro-Interactions:**
+  - 3D card lift and smooth image scale (1.07x) on hover.
+  - Dark gradient overlay reveal showing photographer credits, location, and tags.
+  - Glowing accent border transitions.
+- **Fully Responsive:** Adapts fluidly across mobile phones, tablets, laptops, and ultra-wide displays.
+- **Touch Gesture Support:** Mobile swipe detection (swipe left/right) for intuitive mobile navigation.
+- **Bonus Features:**
+  - 🏷️ **Dynamic Category Filtering:** Filter across Nature, Architecture, Neon & City, Wildlife, and Minimalist with live item counters.
+  - 🔍 **Real-Time Instant Search:** Instantly search photographs by title, photographer, location, or tag.
   - ❤️ **Favorites / Likes System:** Persisted locally using browser `localStorage` with live counter badge.
-  - 🔍 **Zoom & Fullscreen Mode:** Seamless inspection with 1.6x zoom toggle and HTML5 Fullscreen API.
+  - 🔬 **Zoom & Fullscreen:** 1.6x zoom toggle with panning support and native HTML5 Fullscreen API integration.
 
 ---
 
@@ -31,32 +35,32 @@ A modern, high-performance, and visually immersive **Interactive Image Gallery**
 ```text
 CodeAlpha_ImageGallery/
 ├── index.html       # Semantic HTML5 markup, accessibility, and modal structure
-├── styles.css       # Design system tokens, glassmorphism, responsive grid, animations
-├── script.js        # Data model, category filter, instant search, lightbox engine
-└── README.md        # Project documentation and submission guide
+├── styles.css       # Design tokens, glassmorphism, responsive grid, animations
+├── script.js        # Photo data, category filtering, search, lightbox engine
+└── README.md        # Project overview and documentation
 ```
 
 ---
 
 ## 🚀 How to Run Locally
 
-You don't need any complex build tools or npm dependencies! It is built with zero-dependency native web standards.
+This project is built using zero-dependency vanilla web standards.
 
-1. **Option 1: Direct Browser Launch**
-   - Double-click `index.html` or right-click and choose **Open with Google Chrome / Microsoft Edge / Firefox**.
-
-2. **Option 2: Live Server (VS Code / Antigravity IDE)**
-   - Open this folder in your code editor.
-   - Right-click `index.html` and click **"Open with Live Server"** or run:
-     ```bash
-     npx serve .
-     ```
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/manish-341/CodeAlpha_ImageGallery.git
+   ```
+2. Navigate into the folder:
+   ```bash
+   cd CodeAlpha_ImageGallery
+   ```
+3. Open `index.html` directly in any web browser (Chrome, Edge, Firefox, Safari).
 
 ---
 
 ## ⌨️ Keyboard Shortcuts
 
-| Key | Action |
+| Shortcut | Description |
 |---|---|
 | <kbd>→</kbd> (Right Arrow) | Next image in lightbox |
 | <kbd>←</kbd> (Left Arrow) | Previous image in lightbox |
@@ -68,37 +72,15 @@ You don't need any complex build tools or npm dependencies! It is built with zer
 
 ---
 
-## 📤 Step-by-Step GitHub Submission Guide
+## 🛠️ Built With
 
-As specified by CodeAlpha instructions, upload this repository to GitHub with the name `CodeAlpha_ImageGallery`:
-
-1. Open a terminal or PowerShell inside the project directory:
-   ```bash
-   cd C:\Users\MANISH\Downloads\CodeAlpha_ImageGallery
-   ```
-
-2. Initialize a Git repository:
-   ```bash
-   git init
-   git add .
-   git commit -m "feat: complete Task 1 Image Gallery for CodeAlpha Internship"
-   ```
-
-3. Create a new public repository on [GitHub](https://github.com/new) named:
-   ```
-   CodeAlpha_ImageGallery
-   ```
-
-4. Link and push your local branch:
-   ```bash
-   git branch -M main
-   git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/CodeAlpha_ImageGallery.git
-   git push -u origin main
-   ```
+- **HTML5:** Semantic elements, accessible ARIA attributes.
+- **CSS3:** Custom properties, Flexbox, CSS Columns (Masonry), transitions, keyframe animations, glassmorphism.
+- **JavaScript (ES6+):** DOM manipulation, event handling, LocalStorage API, Fullscreen API, touch gestures.
 
 ---
 
 ## 👨‍💻 Author
-- **Developer:** Manish
+- **Developer:** Manish Kumar
 - **Internship:** CodeAlpha Frontend Development Internship
 - **Task:** Task 1 — Image Gallery
